@@ -4,6 +4,7 @@
     <modules>
       <module fileurl="file://$PROJECT_DIR$/RadBoss.iml" filepath="$PROJECT_DIR$/RadBoss.iml" />
       <module fileurl="file://$PROJECT_DIR$/app/app.iml" filepath="$PROJECT_DIR$/app/app.iml" />
+      <module fileurl="file://$PROJECT_DIR$/radlib/radlib.iml" filepath="$PROJECT_DIR$/radlib/radlib.iml" />
     </modules>
   </component>
 </project>
