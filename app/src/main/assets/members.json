@@ -1,0 +1,50 @@
+[
+  {
+    "name": "MOO",
+    "icon": "m1"
+  },
+  {
+    "name": "ALDEBARAN",
+    "icon": "m2"
+  },
+  {
+    "name": "SAGA",
+    "icon": "m3"
+  },
+  {
+    "name": "DEATHMASK",
+    "icon": "m4"
+  },
+  {
+    "name": "AIOLIA",
+    "icon": "m5"
+  },
+  {
+    "name": "SHAKA",
+    "icon": "m6"
+  },
+  {
+    "name": "DOHKO",
+    "icon": "m7"
+  },
+  {
+    "name": "MILO",
+    "icon": "m8"
+  },
+  {
+    "name": "AIOLOS",
+    "icon": "m9"
+  },
+  {
+    "name": "SHURA",
+    "icon": "m10"
+  },
+  {
+    "name": "CAMUS",
+    "icon": "m11"
+  },
+  {
+    "name": "APHRODITE",
+    "icon": "m12"
+  }
+]

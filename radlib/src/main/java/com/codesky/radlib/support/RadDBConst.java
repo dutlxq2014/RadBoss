@@ -6,9 +6,9 @@ package com.codesky.radlib.support;
  */
 public class RadDBConst {
 
-    public static final String RECORD_ID = "_id";
-    public static final String RECORD_KEY = "key";
-    public static final String RECORD_DS = "ds";
-    public static final String RECORD_DATA = "data";
-    public static final String RECORD_SIZE = "size";
+    public static final String FIELD_ID = "_id";
+    public static final String FIELD_KEY = "key";
+    public static final String FIELD_DS = "ds";
+    public static final String FIELD_DATA = "data";
+    public static final String FIELD_SIZE = "size";
 }

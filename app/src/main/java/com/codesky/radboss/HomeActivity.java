@@ -1,236 +1,88 @@
 package com.codesky.radboss;
 
-import android.content.ContentValues;
-import android.content.Context;
+import android.content.Intent;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
-import android.util.Log;
-import android.view.LayoutInflater;
 import android.view.View;
-import android.view.ViewGroup;
-import android.widget.BaseAdapter;
+import android.widget.AdapterView;
 import android.widget.ListView;
-import android.widget.TextView;
 
-import com.codesky.radboss.core.RadCallback;
-import com.codesky.radboss.core.RadResult;
-import com.codesky.radboss.core.RadDispatcher;
-import com.codesky.radboss.core.TableStruct;
-import com.codesky.radboss.mock.Mock;
+import com.codesky.radboss.example.MemberAdapter;
+import com.codesky.radboss.example.MemberBean;
+import com.codesky.radboss.util.FileUtil;
 
-import java.util.Collections;
+import org.json.JSONArray;
+import org.json.JSONException;
+import org.json.JSONObject;
+
+import java.text.SimpleDateFormat;
+import java.util.ArrayList;
+import java.util.Date;
 import java.util.List;
+import java.util.Locale;
 
 public class HomeActivity extends AppCompatActivity {
 
-    private static final String TAG = "HomeActivity";
+    private static final String TAG = HomeActivity.class.getSimpleName();
+    public static final int REQUEST_CODE_TO_CHAT = 1001;
 
-    ListView mAllListView;
-    RecordAdapter mAllAdapter;
-    ListView mResListView;
-    RecordAdapter mResAdapter;
+    ListView mMemberListView;
+    MemberAdapter mMemberAdapter;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_home);
 
-        findViewById(R.id.insert_one).setOnClickListener(new View.OnClickListener() {
+        mMemberListView = (ListView) findViewById(R.id.chat_member_list);
+        mMemberAdapter = new MemberAdapter(this, requestMembers());
+        mMemberListView.setAdapter(mMemberAdapter);
+        mMemberListView.setOnItemClickListener(new AdapterView.OnItemClickListener() {
             @Override
-            public void onClick(View view) {
-                ContentValues record = Mock.singleInsert();
-                RadDispatcher.getInstance().insertAsync(record, new RadCallback<ContentValues>() {
-                    @Override
-                    public void onResult(RadResult<ContentValues> result) {
-                        Log.i(TAG, "Callback from insert_one");
-                        displayResult(Collections.singletonList(result.getData()));
-                        dumpStorage();
-                    }
-                });
-            }
-        });
-
-        findViewById(R.id.insert_n).setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View view) {
-                List<ContentValues> records = Mock.multiInsert();
-                RadDispatcher.getInstance().insertAsync(records, new RadCallback<List<ContentValues>>() {
-                    @Override
-                    public void onResult(RadResult<List<ContentValues>> result) {
-                        Log.i(TAG, "Callback from insert_n");
-                        displayResult(result.getData());
-                        dumpStorage();
-                    }
-                });
-            }
-        });
-
-        findViewById(R.id.delete_one).setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View view) {
-                ContentValues key = Mock.singleDelete();
-                RadDispatcher.getInstance().deleteAsync(key, new RadCallback<List<ContentValues>>() {
-                    @Override
-                    public void onResult(RadResult<List<ContentValues>> result) {
-                        Log.i(TAG, "Callback from delete_one");
-                        displayResult(result.getData());
-                        dumpStorage();
-                    }
-                });
-            }
-        });
-
-        findViewById(R.id.delete_n).setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View view) {
-                List<ContentValues> keys = Mock.multiDelete();
-                RadDispatcher.getInstance().deleteAsync(keys, new RadCallback<List<ContentValues>>() {
-                    @Override
-                    public void onResult(RadResult<List<ContentValues>> result) {
-                        Log.i(TAG, "Callback from delete_n");
-                        displayResult(result.getData());
-                        dumpStorage();
-                    }
-                });
-            }
-        });
-
-        findViewById(R.id.modify_one).setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View view) {
-                ContentValues record = Mock.singleModify();
-                RadDispatcher.getInstance().modifyAsync(record, new RadCallback<List<ContentValues>>() {
-                    @Override
-                    public void onResult(RadResult<List<ContentValues>> result) {
-                        Log.i(TAG, "Callback from modify_one");
-                        displayResult(result.getData());
-                        dumpStorage();
-                    }
-                });
-            }
-        });
-
-        findViewById(R.id.modify_n).setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View view) {
-                List<ContentValues> records = Mock.multiModify();
-                RadDispatcher.getInstance().modifyAsync(records, new RadCallback<List<ContentValues>>() {
-                    @Override
-                    public void onResult(RadResult<List<ContentValues>> result) {
-                        Log.i(TAG, "Callback from modify_n");
-                        displayResult(result.getData());
-                        dumpStorage();
-                    }
-                });
-            }
-        });
-
-        findViewById(R.id.query_one).setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View view) {
-                ContentValues key = Mock.singleQuery();
-                RadDispatcher.getInstance().queryAsync(key, new RadCallback<List<ContentValues>>() {
-                    @Override
-                    public void onResult(RadResult<List<ContentValues>> result) {
-                        Log.i(TAG, "Callback from query_one");
-                        displayResult(result.getData());
-                        dumpStorage();
-                    }
-                });
-            }
-        });
-
-        findViewById(R.id.query_n).setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View view) {
-                List<ContentValues> keys = Mock.multiQuery();
-                RadDispatcher.getInstance().queryAsync(keys, new RadCallback<List<ContentValues>>() {
-                    @Override
-                    public void onResult(RadResult<List<ContentValues>> result) {
-                        Log.i(TAG, "Callback from query_n");
-                        displayResult(result.getData());
-                        dumpStorage();
-                    }
-                });
-            }
-        });
-
-        mAllListView = (ListView) findViewById(R.id.all_record_list);
-        mAllAdapter = new RecordAdapter(this);
-        mAllListView.setAdapter(mAllAdapter);
-
-        mResListView = (ListView) findViewById(R.id.result_record_list);
-        mResAdapter = new RecordAdapter(this);
-        mResListView.setAdapter(mResAdapter);
-    }
-
-    private void displayResult(List<ContentValues> result) {
-        mResAdapter.setData(result);
-        mResAdapter.notifyDataSetChanged();
-    }
-
-    private void dumpStorage() {
-        ContentValues key = new ContentValues();
-        key.put(TableStruct.KEY, "*");
-        RadDispatcher.getInstance().queryAsync(key, new RadCallback<List<ContentValues>>() {
-            @Override
-            public void onResult(RadResult<List<ContentValues>> result) {
-                mAllAdapter.setData(result.getData());
-                mAllAdapter.notifyDataSetChanged();
+            public void onItemClick(AdapterView<?> adapterView, View view, int i, long l) {
+                Object data = adapterView.getAdapter().getItem(i);
+                if (data instanceof MemberBean) {
+                    MemberBean bean = (MemberBean) data;
+                    Intent intent = new Intent(HomeActivity.this, ChatActivity.class);
+                    intent.putExtra(ChatActivity.CHAT_ICON, bean.iconId);
+                    intent.putExtra(ChatActivity.CHAT_NAME, bean.name);
+                    startActivityForResult(intent, REQUEST_CODE_TO_CHAT);
+                }
             }
         });
     }
 
-    private static class RecordAdapter extends BaseAdapter {
-
-        Context mContext;
-        List<ContentValues> mData;
-
-        public RecordAdapter(Context context) {
-            mContext = context;
-        }
-
-        public void setData(List<ContentValues> data) {
-            mData = data;
-        }
-
-        @Override
-        public int getCount() {
-            return mData == null ? 0 : mData.size();
-        }
-
-        @Override
-        public Object getItem(int i) {
-            return mData == null ? null : mData.get(i);
-        }
-
-        @Override
-        public long getItemId(int i) {
-            return i;
-        }
-
-        @Override
-        public View getView(int i, View view, ViewGroup viewGroup) {
-            ContentValues data = mData.get(i);
-            if (view == null) {
-                view = LayoutInflater.from(mContext).inflate(R.layout.record_row, viewGroup, false);
-                ViewHolder holder = new ViewHolder();
-                holder.id = (TextView) view.findViewById(R.id.id);
-                holder.key = (TextView) view.findViewById(R.id.key);
-                holder.value = (TextView) view.findViewById(R.id.value);
-                view.setTag(holder);
+    @Override
+    protected void onActivityResult(int requestCode, int resultCode, Intent data) {
+        if (requestCode == REQUEST_CODE_TO_CHAT) {
+            if (resultCode == RESULT_OK && data != null) {
+                String lastMsg = data.getStringExtra(ChatActivity.CHAT_LAST_MSG);
+                String name = data.getStringExtra(ChatActivity.CHAT_NAME);
+                // update data here
             }
-            ViewHolder vHolder = (ViewHolder) view.getTag();
-            vHolder.id.setText(String.valueOf(i));
-            vHolder.key.setText(data.getAsString(TableStruct.KEY));
-            vHolder.value.setText(new String(data.getAsByteArray(TableStruct.VALUE)));
-            return view;
         }
+        super.onActivityResult(requestCode, resultCode, data);
     }
 
-    private static class ViewHolder {
-        public TextView id;
-        public TextView key;
-        public TextView value;
+    private List<MemberBean> requestMembers() {
+        List<MemberBean> datas = new ArrayList<MemberBean>();
+        JSONArray src = FileUtil.loadJsonArray("members.json");
+        if (src != null && src.length() > 0) {
+            SimpleDateFormat formatter = new SimpleDateFormat("HH:mm", Locale.CHINA);
+            for (int i=0; i<src.length(); ++i) {
+                try {
+                    JSONObject ith = src.getJSONObject(i);
+                    MemberBean bean = new MemberBean();
+                    bean.name = ith.getString("name");
+                    bean.icon = ith.getString("icon");
+                    bean.iconId = getResources().getIdentifier(bean.icon, "mipmap", getPackageName());
+                    bean.time = formatter.format(new Date());
+                    datas.add(bean);
+                } catch (JSONException e) {
+                    e.printStackTrace();
+                }
+            }
+        }
+        return datas;
     }
 }

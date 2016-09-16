@@ -1,0 +1,48 @@
+<?xml version="1.0" encoding="utf-8"?>
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    tools:context="com.codesky.radboss.ChatActivity">
+
+    <ImageView
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:scaleType="centerCrop"
+        android:alpha="0.2"
+        android:src="@drawable/athena"/>
+
+    <LinearLayout
+        android:id="@+id/chat_bar"
+        android:layout_width="match_parent"
+        android:layout_height="48dp"
+        android:gravity="center_vertical"
+        android:orientation="horizontal"
+        android:layout_alignParentBottom="true"
+        android:background="#ffffffff">
+        <Button
+            android:id="@+id/chat_left"
+            android:layout_width="64dp"
+            android:layout_height="match_parent"
+            android:text="HE"/>
+        <EditText
+            android:id="@+id/chat_text"
+            android:layout_width="0dp"
+            android:layout_height="match_parent"
+            android:layout_weight="1"
+            android:layout_marginLeft="4dp"
+            android:layout_marginRight="4dp"/>
+        <Button
+            android:id="@+id/chat_right"
+            android:layout_width="64dp"
+            android:layout_height="match_parent"
+            android:text="Me"/>
+    </LinearLayout>
+
+    <ListView
+        android:id="@+id/chat_content_list"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:layout_above="@id/chat_bar"/>
+
+</RelativeLayout>

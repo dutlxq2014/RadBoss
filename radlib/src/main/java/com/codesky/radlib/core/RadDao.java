@@ -44,15 +44,15 @@ public class RadDao implements IRadDao, Handler.Callback {
         mainHandler = new Handler(Looper.getMainLooper());
     }
 
-    public static RadDao getInstance() {
+    public static IRadDao getInstance() {
         return SingletonHolder.sInstance;
     }
 
     /**
-     * 1. 增加 @hide
-     * @return 成功插入的记录
+     * 1. Insert @hide
+     * @return Records successfully inserted.
      */
-    public RadResult<List<RadRecord>> insert(ERadTab module, RadRecord record) {
+    private RadResult<List<RadRecord>> insert(ERadTab module, RadRecord record) {
         RadLog.i(TAG, "insert single key=" + record.key);
         ContentValues target = toRecord(record);
         List<ContentValues> retVal = new ArrayList<ContentValues>();
@@ -63,10 +63,10 @@ public class RadDao implements IRadDao, Handler.Callback {
     }
 
     /**
-     * 1. 增加 @hide
-     * @return 成功插入的记录
+     * 1. Insert @hide
+     * @return Records successfully inserted.
      */
-    public RadResult<List<RadRecord>> insert(ERadTab module, List<RadRecord> records) {
+    private RadResult<List<RadRecord>> insert(ERadTab module, List<RadRecord> records) {
         RadLog.i(TAG, "insert list");
         List<ContentValues> targets = toRecord(records);
         List<ContentValues> retVal = new ArrayList<ContentValues>();
@@ -77,10 +77,10 @@ public class RadDao implements IRadDao, Handler.Callback {
     }
 
     /**
-     * 2. 删除 默认匹配 {@link RadDBConst#RECORD_ID} 相等
-     * @return 被删除的记录
+     * 2. Delete if {@link RadDBConst#FIELD_ID} matches.
+     * @return Records been deleted.
      */
-    public RadResult<List<RadRecord>> delete(ERadTab module, RadRecord key) {
+    private RadResult<List<RadRecord>> delete(ERadTab module, RadRecord key) {
         RadLog.i(TAG, "delete by key=" + key.key);
         ContentValues target = toRecord(key);
         List<ContentValues> retVal = new ArrayList<ContentValues>();
@@ -91,10 +91,10 @@ public class RadDao implements IRadDao, Handler.Callback {
     }
 
     /**
-     * 2. 删除 默认匹配 {@link RadDBConst#RECORD_ID} 相等
-     * @return 被删除的记录
+     * 2. Delete if {@link RadDBConst#FIELD_ID} matches.
+     * @return Records been deleted.
      */
-    public RadResult<List<RadRecord>> delete(ERadTab module, List<RadRecord> keys) {
+    private RadResult<List<RadRecord>> delete(ERadTab module, List<RadRecord> keys) {
         RadLog.i(TAG, "delete list");
         List<ContentValues> targets = toRecord(keys);
         List<ContentValues> retVal = new ArrayList<ContentValues>();
@@ -105,10 +105,10 @@ public class RadDao implements IRadDao, Handler.Callback {
     }
 
     /**
-     * 2. 删除 默认匹配 {@link RadDBConst#RECORD_ID} 相等
-     * @return 被删除的记录
+     * 2. Delete if {@link RadDBConst#FIELD_ID} matches.
+     * @return Records been deleted.
      */
-    public RadResult<List<RadRecord>> deleteById(ERadTab module, RadRecord key) {
+    private RadResult<List<RadRecord>> deleteById(ERadTab module, RadRecord key) {
         RadLog.i(TAG, "delete by id=" + key.id);
         ContentValues target = toRecord(key);
         List<ContentValues> retVal = new ArrayList<ContentValues>();
@@ -119,10 +119,10 @@ public class RadDao implements IRadDao, Handler.Callback {
     }
 
     /**
-     * 2. 删除 默认匹配 {@link RadDBConst#RECORD_ID} 相等
-     * @return 被删除的记录
+     * 2. Delete if {@link RadDBConst#FIELD_ID} matches.
+     * @return Records been deleted.
      */
-    public RadResult<List<RadRecord>> deleteById(ERadTab module, List<RadRecord> keys) {
+    private RadResult<List<RadRecord>> deleteById(ERadTab module, List<RadRecord> keys) {
         RadLog.i(TAG, "delete by id list");
         List<ContentValues> targets = toRecord(keys);
         List<ContentValues> retVal = new ArrayList<ContentValues>();
@@ -133,10 +133,10 @@ public class RadDao implements IRadDao, Handler.Callback {
     }
 
     /**
-     * 3. 修改 默认匹配 {@link RadDBConst#RECORD_ID} 相等
-     * @return 被修改的记录
+     * 3. Modify if {@link RadDBConst#FIELD_ID} matches.
+     * @return Old records been modified.
      */
-    public RadResult<List<RadRecord>> modify(ERadTab module, RadRecord value) {
+    private RadResult<List<RadRecord>> modify(ERadTab module, RadRecord value) {
         RadLog.i(TAG, "modify by key=" + value.key);
         ContentValues target = toRecord(value);
         List<ContentValues> retVal = new ArrayList<ContentValues>();
@@ -147,10 +147,10 @@ public class RadDao implements IRadDao, Handler.Callback {
     }
 
     /**
-     * 3. 修改 默认匹配 {@link RadDBConst#RECORD_ID} 相等
-     * @return 被修改的记录
+     * 3. Modify if {@link RadDBConst#FIELD_ID} matches.
+     * @return Old records been modified.
      */
-    public RadResult<List<RadRecord>> modify(ERadTab module, List<RadRecord> values) {
+    private RadResult<List<RadRecord>> modify(ERadTab module, List<RadRecord> values) {
         RadLog.i(TAG, "modify list");
         List<ContentValues> targets = toRecord(values);
         List<ContentValues> retVal = new ArrayList<ContentValues>();
@@ -161,10 +161,10 @@ public class RadDao implements IRadDao, Handler.Callback {
     }
 
     /**
-     * 3. 修改 匹配 {@link RadDBConst#RECORD_ID} 相等
-     * @return 被修改的记录
+     * 3. Modify if {@link RadDBConst#FIELD_ID} matches.
+     * @return Old records been modified.
      */
-    public RadResult<List<RadRecord>> modifyById(ERadTab module, RadRecord value) {
+    private RadResult<List<RadRecord>> modifyById(ERadTab module, RadRecord value) {
         RadLog.i(TAG, "modify by id=" + value.id);
         ContentValues target = toRecord(value);
         List<ContentValues> retVal = new ArrayList<ContentValues>();
@@ -175,10 +175,10 @@ public class RadDao implements IRadDao, Handler.Callback {
     }
 
     /**
-     * 3. 修改 匹配 {@link RadDBConst#RECORD_ID} 相等
-     * @return 被修改的记录
+     * 3. Modify if {@link RadDBConst#FIELD_ID} matches.
+     * @return Old records been modified.
      */
-    public RadResult<List<RadRecord>> modifyById(ERadTab module, List<RadRecord> values) {
+    private RadResult<List<RadRecord>> modifyById(ERadTab module, List<RadRecord> values) {
         RadLog.i(TAG, "modify by id list");
         List<ContentValues> targets = toRecord(values);
         List<ContentValues> retVal = new ArrayList<ContentValues>();
@@ -189,10 +189,10 @@ public class RadDao implements IRadDao, Handler.Callback {
     }
 
     /**
-     * 4. 查询 默认匹配 {@link RadDBConst#RECORD_ID} 相等
-     * @return 查询到的记录
+     * 4. Query that {@link RadDBConst#FIELD_KEY} matches.
+     * @return Records meet query condition.
      */
-    public RadResult<List<RadRecord>> query(ERadTab module, RadRecord key) {
+    private RadResult<List<RadRecord>> query(ERadTab module, RadRecord key) {
         RadLog.i(TAG, "query by key=" + key.key);
         ContentValues target = toRecord(key);
         List<ContentValues> retVal = new ArrayList<ContentValues>();
@@ -203,10 +203,10 @@ public class RadDao implements IRadDao, Handler.Callback {
     }
 
     /**
-     * 4. 查询 默认匹配 {@link RadDBConst#RECORD_ID} 相等
-     * @return 查询到的记录
+     * 4. Query that {@link RadDBConst#FIELD_KEY} matches.
+     * @return Records meet query condition.
      */
-    public RadResult<List<RadRecord>> query(ERadTab module, List<RadRecord> keys) {
+    private RadResult<List<RadRecord>> query(ERadTab module, List<RadRecord> keys) {
         RadLog.i(TAG, "query list");
         List<ContentValues> targets = toRecord(keys);
         List<ContentValues> retVal = new ArrayList<ContentValues>();
@@ -217,10 +217,10 @@ public class RadDao implements IRadDao, Handler.Callback {
     }
 
     /**
-     * 4. 查询 默认匹配 {@link RadDBConst#RECORD_ID} 相等
-     * @return 查询到的记录
+     * 4. Query that {@link RadDBConst#FIELD_ID} matches.
+     * @return Records meet query condition.
      */
-    public RadResult<List<RadRecord>> queryById(ERadTab module, RadRecord key) {
+    private RadResult<List<RadRecord>> queryById(ERadTab module, RadRecord key) {
         RadLog.i(TAG, "query by id=" + key.id);
         ContentValues target = toRecord(key);
         List<ContentValues> retVal = new ArrayList<ContentValues>();
@@ -231,10 +231,10 @@ public class RadDao implements IRadDao, Handler.Callback {
     }
 
     /**
-     * 4. 查询 默认匹配 {@link RadDBConst#RECORD_ID} 相等
-     * @return 查询到的记录
+     * 4. Query that {@link RadDBConst#FIELD_ID} matches.
+     * @return Records meet query condition.
      */
-    public RadResult<List<RadRecord>> queryById(ERadTab module, List<RadRecord> keys) {
+    private RadResult<List<RadRecord>> queryById(ERadTab module, List<RadRecord> keys) {
         RadLog.i(TAG, "query by id list");
         List<ContentValues> targets = toRecord(keys);
         List<ContentValues> retVal = new ArrayList<ContentValues>();

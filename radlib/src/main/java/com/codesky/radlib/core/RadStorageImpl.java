@@ -14,7 +14,7 @@ import java.util.ArrayList;
 import java.util.List;
 
 /**
- * database object {@link android.content.ContentValues}
+ * Database object {@link android.content.ContentValues}
  *
  * Created by xueqiulxq on 9/15/16.
  */
@@ -23,10 +23,10 @@ class RadStorageImpl implements IRadStorage {
     private static final String TAG = RadStorageImpl.class.getSimpleName();
 
     private RadDbHelper dbHelper;
-    private static final String WHERE_KEY_CLAUSE = RadDBConst.RECORD_KEY + "=?";
-    private static final String WHERE_ID_CLAUSE = RadDBConst.RECORD_ID + "=?";
+    private static final String WHERE_KEY_CLAUSE = RadDBConst.FIELD_KEY + "=?";
+    private static final String WHERE_ID_CLAUSE = RadDBConst.FIELD_ID + "=?";
     private static final String WHERE_KEY_ID_CLAUSE = WHERE_KEY_CLAUSE + " and " + WHERE_ID_CLAUSE;
-    private static final String WHERE_ID_LITTLE_CLAUSE = RadDBConst.RECORD_ID + "<?";
+    private static final String WHERE_ID_LITTLE_CLAUSE = RadDBConst.FIELD_ID + "<?";
     private static final String ALL_RECORD = "*";
     private static final String LIMIT_PAGE = "80";          // 每页的限制
     private static final String LIMIT_TOTAL = LIMIT_PAGE;   // DB总数的显示
@@ -51,15 +51,15 @@ class RadStorageImpl implements IRadStorage {
     private void pruneDbSize(ERadTab module) {
         Cursor cursor = null;
         try {
-            cursor = dbHelper.getReadableDatabase().query(module.table(), new String[]{RadDBConst.RECORD_ID},
+            cursor = dbHelper.getReadableDatabase().query(module.table(), new String[]{RadDBConst.FIELD_ID},
                     null, null, null, null, null, null);
             long firstId = -1;
             long lastId = -1;
             if (cursor.moveToFirst()) {
-                firstId = cursor.getLong(cursor.getColumnIndex(RadDBConst.RECORD_ID));
+                firstId = cursor.getLong(cursor.getColumnIndex(RadDBConst.FIELD_ID));
             }
             if (cursor.moveToLast()) {
-                lastId = cursor.getLong(cursor.getColumnIndex(RadDBConst.RECORD_ID));
+                lastId = cursor.getLong(cursor.getColumnIndex(RadDBConst.FIELD_ID));
             }
             long MAX_LIMIT = Long.parseLong(LIMIT_TOTAL);
             if (firstId >= 0 && lastId - firstId > MAX_LIMIT) {
@@ -87,7 +87,7 @@ class RadStorageImpl implements IRadStorage {
         try {
             ensureTableExist(module);
             long id = dbHelper.getWritableDatabase().insert(module.table(), null, record);
-            record.put(RadDBConst.RECORD_ID, id);
+            record.put(RadDBConst.FIELD_ID, id);
             if (id > 0) {
                 retVal.add(record);
                 return true;
@@ -122,7 +122,7 @@ class RadStorageImpl implements IRadStorage {
      */
     public boolean delete(ERadTab module, ContentValues key, List<ContentValues> retVal) {
         try {
-            String wk = key.getAsString(RadDBConst.RECORD_KEY);
+            String wk = key.getAsString(RadDBConst.FIELD_KEY);
             List<ContentValues> toDel = new ArrayList<ContentValues>();
             boolean succ = query(module, key, toDel);
             if (succ && toDel.size() > 0) {
@@ -168,7 +168,7 @@ class RadStorageImpl implements IRadStorage {
     public boolean deleteById(ERadTab module, ContentValues key, List<ContentValues> retVal) {
         try {
             ensureTableExist(module);
-            Long id = key.getAsLong(RadDBConst.RECORD_ID);
+            Long id = key.getAsLong(RadDBConst.FIELD_ID);
             if (id != null && id > 0) {
                 List<ContentValues> toDelete = new ArrayList<ContentValues>();
                 boolean succ = queryById(module, key, toDelete);
@@ -212,7 +212,7 @@ class RadStorageImpl implements IRadStorage {
      */
     public boolean modify(ERadTab module, ContentValues record, List<ContentValues> retVal) {
         try {
-            String wk = record.getAsString(RadDBConst.RECORD_KEY);
+            String wk = record.getAsString(RadDBConst.FIELD_KEY);
             List<ContentValues> toModify = new ArrayList<ContentValues>();
             boolean succ = query(module, record, toModify);
             if (succ && toModify.size() > 0) {
@@ -257,7 +257,7 @@ class RadStorageImpl implements IRadStorage {
      */
     public boolean modifyById(ERadTab module, ContentValues record, List<ContentValues> retVal) {
         try {
-            Long id = record.getAsLong(RadDBConst.RECORD_ID);
+            Long id = record.getAsLong(RadDBConst.FIELD_ID);
             if (id != null && id > 0) {
                 List<ContentValues> toModify = new ArrayList<ContentValues>();
                 boolean succ = queryById(module, record, toModify);
@@ -303,7 +303,7 @@ class RadStorageImpl implements IRadStorage {
         Cursor cursor = null;
         try {
             ensureTableExist(module);
-            String wk = key.getAsString(RadDBConst.RECORD_KEY);
+            String wk = key.getAsString(RadDBConst.FIELD_KEY);
             if (ALL_RECORD.equals(wk)) {
                 pruneDbSize(module);
                 cursor = dbHelper.getReadableDatabase().query(module.table(), null, null, null, null, null, null, LIMIT_PAGE);
@@ -313,11 +313,11 @@ class RadStorageImpl implements IRadStorage {
             }
             while (cursor.moveToNext()) {
                 ContentValues v = new ContentValues();
-                v.put(RadDBConst.RECORD_ID, cursor.getString(cursor.getColumnIndex(RadDBConst.RECORD_ID)));
-                v.put(RadDBConst.RECORD_KEY, cursor.getString(cursor.getColumnIndex(RadDBConst.RECORD_KEY)));
-                v.put(RadDBConst.RECORD_DATA, cursor.getBlob(cursor.getColumnIndex(RadDBConst.RECORD_DATA)));
-                v.put(RadDBConst.RECORD_SIZE, cursor.getLong(cursor.getColumnIndex(RadDBConst.RECORD_SIZE)));
-                v.put(RadDBConst.RECORD_DS, cursor.getString(cursor.getColumnIndex(RadDBConst.RECORD_DS)));
+                v.put(RadDBConst.FIELD_ID, cursor.getString(cursor.getColumnIndex(RadDBConst.FIELD_ID)));
+                v.put(RadDBConst.FIELD_KEY, cursor.getString(cursor.getColumnIndex(RadDBConst.FIELD_KEY)));
+                v.put(RadDBConst.FIELD_DATA, cursor.getBlob(cursor.getColumnIndex(RadDBConst.FIELD_DATA)));
+                v.put(RadDBConst.FIELD_SIZE, cursor.getLong(cursor.getColumnIndex(RadDBConst.FIELD_SIZE)));
+                v.put(RadDBConst.FIELD_DS, cursor.getString(cursor.getColumnIndex(RadDBConst.FIELD_DS)));
                 retVal.add(v);
             }
             return true;
@@ -355,17 +355,17 @@ class RadStorageImpl implements IRadStorage {
         Cursor cursor = null;
         try {
             ensureTableExist(module);
-            Long id = key.getAsLong(RadDBConst.RECORD_ID);
+            Long id = key.getAsLong(RadDBConst.FIELD_ID);
             if (id != null && id > 0) {
                 cursor = dbHelper.getReadableDatabase().query(module.table(), null, WHERE_ID_CLAUSE,
                         new String[]{id.toString()}, null, null, null, LIMIT_PAGE);
                 while (cursor.moveToNext()) {
                     ContentValues v = new ContentValues();
-                    v.put(RadDBConst.RECORD_ID, cursor.getString(cursor.getColumnIndex(RadDBConst.RECORD_ID)));
-                    v.put(RadDBConst.RECORD_KEY, cursor.getString(cursor.getColumnIndex(RadDBConst.RECORD_KEY)));
-                    v.put(RadDBConst.RECORD_DATA, cursor.getBlob(cursor.getColumnIndex(RadDBConst.RECORD_DATA)));
-                    v.put(RadDBConst.RECORD_SIZE, cursor.getLong(cursor.getColumnIndex(RadDBConst.RECORD_SIZE)));
-                    v.put(RadDBConst.RECORD_DS, cursor.getString(cursor.getColumnIndex(RadDBConst.RECORD_DS)));
+                    v.put(RadDBConst.FIELD_ID, cursor.getString(cursor.getColumnIndex(RadDBConst.FIELD_ID)));
+                    v.put(RadDBConst.FIELD_KEY, cursor.getString(cursor.getColumnIndex(RadDBConst.FIELD_KEY)));
+                    v.put(RadDBConst.FIELD_DATA, cursor.getBlob(cursor.getColumnIndex(RadDBConst.FIELD_DATA)));
+                    v.put(RadDBConst.FIELD_SIZE, cursor.getLong(cursor.getColumnIndex(RadDBConst.FIELD_SIZE)));
+                    v.put(RadDBConst.FIELD_DS, cursor.getString(cursor.getColumnIndex(RadDBConst.FIELD_DS)));
                     retVal.add(v);
                 }
                 return true;

@@ -44,10 +44,10 @@ public class RadDbHelper extends SQLiteOpenHelper {
         // 主记录表
         MAIN_TABLE_COLUMN = new ColumnDef[] {
                 // _id 默认
-                new ColumnDef(RadDBConst.RECORD_KEY, "text", "\"\""),
-                new ColumnDef(RadDBConst.RECORD_DATA, "BLOB", "\"\""),
-                new ColumnDef(RadDBConst.RECORD_DS, "char(16)", "\"\""),
-                new ColumnDef(RadDBConst.RECORD_SIZE, "long", "0")
+                new ColumnDef(RadDBConst.FIELD_KEY, "text", "\"\""),
+                new ColumnDef(RadDBConst.FIELD_DATA, "BLOB", "\"\""),
+                new ColumnDef(RadDBConst.FIELD_DS, "char(16)", "\"\""),
+                new ColumnDef(RadDBConst.FIELD_SIZE, "long", "0")
         };
         BUFF_TABLE_COLUMN = MAIN_TABLE_COLUMN;
     }
