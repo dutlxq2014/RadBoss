@@ -3,6 +3,7 @@ package com.codesky.radboss;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 import android.text.TextUtils;
+import android.view.MenuItem;
 import android.view.View;
 import android.widget.EditText;
 import android.widget.ListView;
@@ -41,6 +42,11 @@ public class ChatActivity extends AppCompatActivity {
         heIcon = getIntent().getIntExtra(CHAT_ICON, 0);
         meIcon = R.drawable.monkey;
 
+        if (getSupportActionBar() != null) {
+            getSupportActionBar().setTitle(mName);
+            getSupportActionBar().setDisplayHomeAsUpEnabled(true);
+        }
+
         findViewById(R.id.chat_left).setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
@@ -63,6 +69,17 @@ public class ChatActivity extends AppCompatActivity {
         mChatListView.setAdapter(mChatAdapter);
 
         queryHistoryMessage(mName);
+    }
+
+    @Override
+    public boolean onOptionsItemSelected(MenuItem item) {
+        switch (item.getItemId()) {
+            case android.R.id.home:
+                finish();
+                return true;
+            default:
+                return super.onOptionsItemSelected(item);
+        }
     }
 
     private String getSendText() {
