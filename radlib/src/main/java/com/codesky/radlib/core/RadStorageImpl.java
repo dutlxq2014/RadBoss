@@ -28,7 +28,7 @@ class RadStorageImpl implements IRadStorage {
     private static final String WHERE_KEY_ID_CLAUSE = WHERE_KEY_CLAUSE + " and " + WHERE_ID_CLAUSE;
     private static final String WHERE_ID_LITTLE_CLAUSE = RadDBConst.FIELD_ID + "<?";
     private static final String ALL_RECORD = "*";
-    private static final String LIMIT_PAGE = "80";          // 每页的限制
+    private static final String LIMIT_PAGE = "128";          // 每页的限制
     private static final String LIMIT_TOTAL = LIMIT_PAGE;   // DB总数的显示
 
     private static class SingletonHolder {

@@ -6,10 +6,17 @@ import android.text.TextUtils;
 import android.view.View;
 import android.widget.EditText;
 import android.widget.ListView;
-import android.widget.TextView;
 import android.widget.Toast;
 
 import com.codesky.radboss.example.ChatAdapter;
+import com.codesky.radboss.example.ChatBean;
+import com.codesky.radboss.example.ChatDataService;
+import com.codesky.radboss.example.DataResult;
+import com.codesky.radboss.example.IServiceCallback;
+import com.codesky.radlib.support.ERadTab;
+
+import java.util.ArrayList;
+import java.util.List;
 
 public class ChatActivity extends AppCompatActivity {
 
@@ -24,6 +31,7 @@ public class ChatActivity extends AppCompatActivity {
     private EditText mEditText;
     private ListView mChatListView;
     private ChatAdapter mChatAdapter;
+    private List<ChatBean> mChatData;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -36,22 +44,25 @@ public class ChatActivity extends AppCompatActivity {
         findViewById(R.id.chat_left).setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                onLeftSendMessage();
+                onSendLeftMessage();
             }
         });
 
         findViewById(R.id.chat_right).setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                onRightSendMessage();
+                onSendRightMessage();
             }
         });
 
         mEditText = (EditText) findViewById(R.id.chat_text);
         mChatListView = (ListView) findViewById(R.id.chat_content_list) ;
 
-        mChatAdapter = new ChatAdapter(this, null);
+        mChatData = new ArrayList<ChatBean>();
+        mChatAdapter = new ChatAdapter(this, mChatData, heIcon, meIcon);
         mChatListView.setAdapter(mChatAdapter);
+
+        queryHistoryMessage(mName);
     }
 
     private String getSendText() {
@@ -60,23 +71,52 @@ public class ChatActivity extends AppCompatActivity {
         return text;
     }
 
-    public void onLeftSendMessage() {
+    public void onSendLeftMessage() {
         String text = getSendText();
         if (TextUtils.isEmpty(text)) {
-            Toast.makeText(ChatActivity.this, "输入内容空!", Toast.LENGTH_SHORT).show();
-            return;
+            Toast.makeText(ChatActivity.this, "Say something.", Toast.LENGTH_SHORT).show();
         } else {
-
+            appendMessage(text, ChatBean.WHO.LEFT);
         }
     }
 
-    public void onRightSendMessage() {
+    public void onSendRightMessage() {
         String text = getSendText();
         if (TextUtils.isEmpty(text)) {
-            Toast.makeText(ChatActivity.this, "输入内容空!", Toast.LENGTH_SHORT).show();
-            return;
+            Toast.makeText(ChatActivity.this, "Say something.", Toast.LENGTH_SHORT).show();
         } else {
-
+            appendMessage(text, ChatBean.WHO.RIGHT);
         }
+    }
+
+    public void appendMessage(String text, ChatBean.WHO who) {
+        final ChatBean bean = new ChatBean();
+        bean.who = who;
+        bean.text = text;
+        ChatDataService.getInstance().append(ERadTab.MAIN, mName, bean, new IServiceCallback<List<ChatBean>>() {
+            @Override
+            public void onResult(DataResult<List<ChatBean>> result) {
+                if (result.isSuccess()) {
+                    mChatData.add(bean);
+                    mChatAdapter.setData(mChatData);
+                    mChatAdapter.notifyDataSetChanged();
+                    mChatListView.setSelection(mChatData.size());
+                }
+            }
+        });
+    }
+
+    public void queryHistoryMessage(String key) {
+        ChatDataService.getInstance().query(ERadTab.MAIN, key, new IServiceCallback<List<ChatBean>>() {
+            @Override
+            public void onResult(DataResult<List<ChatBean>> result) {
+                if (result.isSuccess()) {
+                    mChatData = result.getData();
+                    mChatAdapter.setData(mChatData);
+                    mChatAdapter.notifyDataSetChanged();
+                    mChatListView.setSelection(mChatData.size());
+                }
+            }
+        });
     }
 }
