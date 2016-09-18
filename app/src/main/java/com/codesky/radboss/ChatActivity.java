@@ -3,6 +3,7 @@ package com.codesky.radboss;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 import android.text.TextUtils;
+import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
 import android.widget.EditText;
@@ -72,11 +73,22 @@ public class ChatActivity extends AppCompatActivity {
     }
 
     @Override
+    public boolean onCreateOptionsMenu(Menu menu) {
+        getMenuInflater().inflate(R.menu.chat_menus, menu);
+        return true;
+    }
+
+    @Override
     public boolean onOptionsItemSelected(MenuItem item) {
         switch (item.getItemId()) {
             case android.R.id.home:
                 finish();
                 return true;
+            case R.id.chat_action_clear:
+                onClearChatHistory(mName);
+                return true;
+            case R.id.chat_action_more:
+                Toast.makeText(ChatActivity.this, "More to be done.", Toast.LENGTH_SHORT).show();
             default:
                 return super.onOptionsItemSelected(item);
         }
@@ -132,6 +144,20 @@ public class ChatActivity extends AppCompatActivity {
                     mChatAdapter.setData(mChatData);
                     mChatAdapter.notifyDataSetChanged();
                     mChatListView.setSelection(mChatData.size());
+                }
+            }
+        });
+    }
+
+    public void onClearChatHistory(String key) {
+        ChatDataService.getInstance().delete(ERadTab.MAIN, key, new IServiceCallback<List<ChatBean>>() {
+            @Override
+            public void onResult(DataResult<List<ChatBean>> result) {
+                if (result.isSuccess()) {
+                    mChatData.clear();
+                    mChatAdapter.setData(mChatData);
+                    mChatAdapter.notifyDataSetChanged();
+                    Toast.makeText(ChatActivity.this, "Clear " + result.getData().size() + " records.", Toast.LENGTH_SHORT).show();
                 }
             }
         });

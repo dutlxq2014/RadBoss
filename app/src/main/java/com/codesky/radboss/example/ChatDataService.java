@@ -79,4 +79,24 @@ public class ChatDataService {
             });
         }
     }
+
+    public void delete(ERadTab store, String key, final IServiceCallback<List<ChatBean>> callback) {
+        if (!TextUtils.isEmpty(key)) {
+            final RadRecord record = new RadRecord();
+            record.key = key;
+            mRadDao.deleteAsync(store, record, new IRadCallback<List<RadRecord>>() {
+                @Override
+                public void onResult(RadResult<List<RadRecord>> result) {
+                    DataResult<List<ChatBean>> cbResult = new DataResult<List<ChatBean>>(
+                            result.isSuccess(), result.getMessage());
+                    if (result.isSuccess()) {
+                        cbResult.setData(ChatTrans.toChatBean(result.getData()));
+                    }
+                    if (callback != null) {
+                        callback.onResult(cbResult);
+                    }
+                }
+            });
+        }
+    }
 }
