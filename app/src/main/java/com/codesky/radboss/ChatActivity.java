@@ -1,11 +1,15 @@
 package com.codesky.radboss;
 
+import android.content.Context;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 import android.text.TextUtils;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
+import android.view.ViewConfiguration;
+import android.view.inputmethod.InputMethodManager;
+import android.widget.AbsListView;
 import android.widget.EditText;
 import android.widget.ListView;
 import android.widget.Toast;
@@ -17,6 +21,7 @@ import com.codesky.radboss.example.DataResult;
 import com.codesky.radboss.example.IServiceCallback;
 import com.codesky.radlib.support.ERadTab;
 
+import java.lang.reflect.Field;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -39,6 +44,8 @@ public class ChatActivity extends AppCompatActivity {
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_chat);
+        forceShowActionBarOverflowMenu();
+
         mName = getIntent().getStringExtra(CHAT_NAME);
         heIcon = getIntent().getIntExtra(CHAT_ICON, 0);
         meIcon = R.drawable.monkey;
@@ -68,8 +75,30 @@ public class ChatActivity extends AppCompatActivity {
         mChatData = new ArrayList<ChatBean>();
         mChatAdapter = new ChatAdapter(this, mChatData, heIcon, meIcon);
         mChatListView.setAdapter(mChatAdapter);
+        mChatListView.setOnScrollListener(mOnScrollListener);
 
         queryHistoryMessage(mName);
+    }
+
+    private AbsListView.OnScrollListener mOnScrollListener = new AbsListView.OnScrollListener() {
+        @Override
+        public void onScrollStateChanged(AbsListView absListView, int scrollState) {
+            if (SCROLL_STATE_FLING == scrollState || SCROLL_STATE_TOUCH_SCROLL == scrollState) {
+                collapseSoftInputMethod();
+            } else {
+                // SCROLL_STATE_IDLE
+            }
+        }
+
+        @Override
+        public void onScroll(AbsListView view, int firstVisibleItem, int visibleItemCount, int totalItemCount) {
+
+        }
+    };
+
+    private void collapseSoftInputMethod() {
+        InputMethodManager imm = (InputMethodManager) getSystemService(Context.INPUT_METHOD_SERVICE);
+        imm.hideSoftInputFromWindow(mChatListView.getWindowToken(), 0);
     }
 
     @Override
@@ -89,8 +118,22 @@ public class ChatActivity extends AppCompatActivity {
                 return true;
             case R.id.chat_action_more:
                 Toast.makeText(ChatActivity.this, "More to be done.", Toast.LENGTH_SHORT).show();
+                return true;
             default:
                 return super.onOptionsItemSelected(item);
+        }
+    }
+
+    private void forceShowActionBarOverflowMenu() {
+        try {
+            ViewConfiguration config = ViewConfiguration.get(this);
+            Field menuKeyField = ViewConfiguration.class.getDeclaredField("sHasPermanentMenuKey");
+            if (menuKeyField != null) {
+                menuKeyField.setAccessible(true);
+                menuKeyField.setBoolean(config, false);
+            }
+        } catch (Exception e) {
+            e.printStackTrace();
         }
     }
 

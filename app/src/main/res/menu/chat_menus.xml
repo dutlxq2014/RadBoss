@@ -7,4 +7,6 @@
     <item android:id="@+id/chat_action_more"
         android:title="More"/>
 
+    <!---->
+    <!--http://stackoverflow.com/questions/18380085/menu-items-doesnt-show-up-on-the-actionbar-->
 </menu>
