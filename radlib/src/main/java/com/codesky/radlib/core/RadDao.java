@@ -40,7 +40,7 @@ public class RadDao implements IRadDao, Handler.Callback {
         mStorage = RadStorageImpl.getInstance();
         mThread = new HandlerThread("Thread-rad.db");
         mThread.start();
-        dispHandler = new Handler(this);
+        dispHandler = new Handler(mThread.getLooper(), this);
         mainHandler = new Handler(Looper.getMainLooper());
     }
 
